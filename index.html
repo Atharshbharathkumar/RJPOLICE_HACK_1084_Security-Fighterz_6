@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="raj.css">
+  <title>Geo-Tagged Private Camera System</title>
+</head>
+<body>
+  <div id="app">
+    <h1>Welcome to Geo-Tagged Private Camera System</h1>
+    <div id="content">
+      <label for="userType">Select User Type:</label>
+      <select id="userType" onchange="showUserInterface()">
+        <option value="select">select</option>
+        <option value="police">Police</option>
+        <option value="cameraOwner">Camera Owner</option>
+      </select>
+      <div id="userInterface"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script src="raj.js"></script>
+</body>
+</html>

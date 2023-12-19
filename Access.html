@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+
+    #notification-form {
+      max-width: 400px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+
+    button {
+      background-color: #3498db;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+  <title>Camera Access Request</title>
+</head>
+<body>
+
+<div id="notification-form">
+  <h2>Camera Access Request<br>Camera access needs the Biometrics of the worker</h2>
+  <label for="cameraOwner">Camera Owner:</label>
+  <input type="text" id="cameraOwner" placeholder="Enter camera owner's name">
+
+  <label for="date">Date:</label>
+  <input type="date" id="date">
+
+  <label for="time">Time:</label>
+  <input type="time" id="time">
+
+  <label for="liveSharing">Request Live Sharing:</label>
+  <input type="checkbox" id="liveSharing">
+
+  <button onclick="sendNotification()">Send Request</button>
+</div>
+
+<script>
+  function sendNotification() {
+    const cameraOwner = document.getElementById('cameraOwner').value;
+    const date = document.getElementById('date').value;
+    const time = document.getElementById('time').value;
+    const liveSharing = document.getElementById('liveSharing').checked;
+
+    const confirmationMessage = `Request sent to ${cameraOwner}.`;
+
+    if (confirm(confirmationMessage)) {
+      const videoPath = "run.mp4"; 
+      
+      alert("Access granted. Playing video.");
+      playVideo(videoPath);
+    } else {
+      alert("Request declined.");
+    }
+  }
+
+  function playVideo(videoPath) {
+    const videoElement = document.createElement("video");
+    videoElement.src = videoPath;
+    videoElement.controls = true;
+    
+    document.body.innerHTML = ""; // Clear the body
+    document.body.appendChild(videoElement);
+  }
+</script>
+</body>
+</html>

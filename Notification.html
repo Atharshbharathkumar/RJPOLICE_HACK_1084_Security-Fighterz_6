@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    #access-request {
+      max-width: 400px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    h2 {
+      color: #333;
+    }
+
+    p {
+      line-height: 1.6;
+      color: #555;
+    }
+
+    button {
+      display: inline-block;
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      transition: background-color 0.3s;
+    }
+
+    #accept-button {
+      background-color: #2ecc71; /* Green */
+      color: #fff;
+    }
+
+    #reject-button {
+      background-color: #e74c3c; /* Red */
+      color: #fff;
+    }
+
+    button:hover {
+      background-color: #34495e; /* Darker Blue-Grey */
+    }
+  </style>
+  <title>Access Request</title>
+</head>
+<body>
+
+<div id="access-request">
+  <h2>Access Request<br>Need Fingerprint To Access</h2>
+  <p>The camera at your home is requesting access. Do you accept or reject?<br>Cam:02  Time&Date:12/12/2023:2:00PM</p>
+
+  <button id="accept-button" onclick="acceptAccess()">Accept</button>
+  <button id="reject-button" onclick="rejectAccess()">Reject</button>
+</div>
+
+<script>
+  function acceptAccess() {
+    alert('Access granted! Camera is now accessible.');
+    // Navigate back to the same page
+    window.location.href = 'owner_front.html';
+  }
+
+  function rejectAccess() {
+    alert('Access denied! Camera access request rejected.');
+    // Navigate back to the same page
+    window.location.href = 'owner_front.html';
+  }
+</script>
+
+</body>
+</html>
