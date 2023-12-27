@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 100vh;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #3498db;
+    }
+
+    select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+
+    canvas {
+      display: none;
+      max-width: 100%;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+  </style>
+  <title>Video Page</title>
+</head>
+<body>
+
+<h2>Video Player</h2>
+
+<label for="timeFrames">Select Time Frame:</label>
+<select id="timeFrames" onchange="navigateToFrame()">
+  <option value="dark">Dark (0-2 seconds)</option>
+  <option value="shadow">Shadow of a Man Running (2-5 seconds)</option>
+  <option value="end">End (After 5 seconds)</option>
+</select>
+
+<canvas id="videoCanvas"></canvas>
+
+<script>
+  const videoPath = "run.mp4";
+  const videoElement = document.createElement("video");
+  videoElement.src = videoPath;
+  videoElement.controls = true;
+
+  const canvas = document.getElementById('videoCanvas');
+  const ctx = canvas.getContext('2d');
+
+  videoElement.addEventListener('loadeddata', function () {
+    canvas.width = videoElement.videoWidth;
+    canvas.height = videoElement.videoHeight;
+    videoElement.play();
+
+    const processingInterval = setInterval(() => {
+      processVideo(videoElement, ctx);
+    }, 33); // Adjust the interval as needed
+  });
+
+  document.body.appendChild(videoElement);
+  document.body.appendChild(canvas);
+
+  function processVideo(video, ctx) {
+    const currentTime = video.currentTime;
+
+    if (currentTime < 2) {
+      // Display the first 2 seconds (dark)
+      ctx.drawImage(video, 0, 0, video.width, video.height);
+    } else if (currentTime >= 2 && currentTime < 5) {
+      // Display the next 3 seconds (shadow of a man running)
+      ctx.drawImage(video, video.width / 2, 0, video.width / 2, video.height, 0, 0, video.width / 2, video.height);
+    } else {
+      // Display the remaining video (the end)
+      ctx.drawImage(video, 0, 0, video.width, video.height);
+    }
+  }
+
+  function navigateToFrame() {
+    const timeFramesSelect = document.getElementById("timeFrames");
+    const selectedFrame = timeFramesSelect.value;
+
+    switch (selectedFrame) {
+      case "dark":
+        videoElement.currentTime = 0;
+        break;
+      case "shadow":
+        videoElement.currentTime = 2;
+        break;
+      case "end":
+        videoElement.currentTime = 5;
+        break;
+      default:
+        break;
+    }
+  }
+</script>
+</body>
+</html>
