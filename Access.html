@@ -4,13 +4,26 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+        #policeLogoContainer {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  max-width: 100px; 
+  max-height: 100px;
+  opacity: 0.8; 
+  }
+
+#policeLogoContainer img {
+  width: 100%;
+  height: 100%;
+}
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       background-color: #f4f4f4;
       display: flex;
-      justify-content: center;
+      flex-direction: column;
       align-items: center;
       height: 100vh;
     }
@@ -21,16 +34,24 @@
       background-color: #fff;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #3498db;
     }
 
     label {
       display: block;
       margin-bottom: 10px;
+      color: #333;
     }
 
-    input {
+    input, button, #liveSharing {
       width: 100%;
-      padding: 8px;
+      padding: 10px;
       margin-bottom: 15px;
       box-sizing: border-box;
     }
@@ -39,7 +60,6 @@
       background-color: #3498db;
       color: #fff;
       border: none;
-      padding: 10px 15px;
       border-radius: 5px;
       cursor: pointer;
     }
@@ -53,7 +73,7 @@
 <body>
 
 <div id="notification-form">
-  <h2>Camera Access Request<br>Camera access needs the Biometrics of the worker</h2>
+  <h2>Camera Access Request<br>Biometrics Verification</h2>
   <label for="cameraOwner">Camera Owner:</label>
   <input type="text" id="cameraOwner" placeholder="Enter camera owner's name">
 
@@ -64,9 +84,12 @@
   <input type="time" id="time">
 
   <label for="liveSharing">Request Live Sharing:</label>
-  <input type="checkbox" id="liveSharing">
+  <input type="checkbox" id="liveSharing" onchange="toggleDateTimeInputs()">
 
   <button onclick="sendNotification()">Send Request</button>
+</div>
+<div id="policeLogoContainer">
+  <img src="Rajasthan-Police.jpg" alt="Rajasthan Police Logo">
 </div>
 
 <script>
@@ -76,25 +99,27 @@
     const time = document.getElementById('time').value;
     const liveSharing = document.getElementById('liveSharing').checked;
 
-    const confirmationMessage = `Request sent to ${cameraOwner}.`;
-
-    if (confirm(confirmationMessage)) {
-      const videoPath = "run.mp4"; 
-      
-      alert("Access granted. Playing video.");
-      playVideo(videoPath);
+    if (liveSharing) {
+      alert("Live Sharing is requested. Access for Date and Time is disabled.");
     } else {
-      alert("Request declined.");
+      const confirmationMessage = `Request sent to ${cameraOwner}.`;
+
+      if (confirm(confirmationMessage)) {
+        alert("Access granted. Redirecting to the video page.");
+        window.location.href = "video.html";
+      } else {
+        alert("Request declined.");
+      }
     }
   }
 
-  function playVideo(videoPath) {
-    const videoElement = document.createElement("video");
-    videoElement.src = videoPath;
-    videoElement.controls = true;
-    
-    document.body.innerHTML = ""; // Clear the body
-    document.body.appendChild(videoElement);
+  function toggleDateTimeInputs() {
+    const dateInput = document.getElementById('date');
+    const timeInput = document.getElementById('time');
+    const liveSharingCheckbox = document.getElementById('liveSharing');
+
+    dateInput.disabled = liveSharingCheckbox.checked;
+    timeInput.disabled = liveSharingCheckbox.checked;
   }
 </script>
 </body>
