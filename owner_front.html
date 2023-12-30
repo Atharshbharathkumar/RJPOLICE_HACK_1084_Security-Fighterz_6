@@ -4,6 +4,30 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+#taskbar img {
+  width: 60px; 
+  height: 60px; 
+  border-radius: 50%; 
+  margin-bottom: 10px; 
+  transition: transform 0.3s; 
+}
+
+#taskbar img:hover {
+  transform: scale(1.2); 
+}
+        #policeLogoContainer {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  max-width: 100px; 
+  max-height: 100px;
+  opacity: 0.8; 
+  }
+
+#policeLogoContainer img {
+  width: 100%;
+  height: 100%;
+}
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -98,12 +122,14 @@
 <body>
 
 <div id="taskbar">
+  <img src="Rajasthan-Police.jpg" alt="Rajasthan Police Logo">
   <a href="#about">About Us</a>
   <a href="Notification.html"><span class="exclamation">!</span>Notifications</a>
   <a href="FeedbackO.html">Feedback</a>
   <a href="https://news.google.com/search?q=recent%20theft%20cases%20in%20india%20and%20breaking%20into%20house&hl=en-IN&gl=IN&ceid=IN%3Aen">Hot News</a>
   <a href="chat.html"><span class="exclamation">!</span>Chat</a>
 </div>
+
 
 <header>
   <h1>Geo-Tagged Private Camera System</h1>
