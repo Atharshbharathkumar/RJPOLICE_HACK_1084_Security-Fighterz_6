@@ -21,32 +21,50 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      background-image: radial-gradient(#fff,#00ffff,#ffc0cb);
       display: flex;
       flex-direction: column;
       align-items: center;
       height: 100vh;
     }
+    .title{
+    text-align: center;
+    margin: 0 auto 80px;
+    position: relative;
+    line-height: 60px;
+  
+    }
+    .title::after{
+    content: '';
+    background: #ff523b;
+    width: 80px;
+    height: 5px;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
     #notification-form {
       max-width: 400px;
       padding: 20px;
       background-color: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
-      margin-bottom: 20px;
+      box-shadow: 20px 10px black;
+      border-radius: 30px;
+      margin-bottom: px;
     }
 
     h2 {
       text-align: center;
       margin-bottom: 20px;
-      color: #3498db;
+      color:black;
     }
 
     label {
       display: block;
       margin-bottom: 10px;
-      color: #333;
+      color: solid black;
     }
 
     input, button, #liveSharing {
@@ -66,6 +84,8 @@
 
     button:hover {
       background-color: #2980b9;
+      background:#ff523b;
+      transition: 0.5s;
     }
   </style>
   <title>Camera Access Request</title>
@@ -73,17 +93,19 @@
 <body>
 
 <div id="notification-form">
-  <h2>Camera Access Request<br>Biometrics Verification</h2>
-  <label for="cameraOwner">Camera Owner:</label>
+  <h2 class="title"><b><i>Camera Access Request<br>Biometrics Verification</i></b></h2>
+  <div class="date">
+  <label for="cameraOwner"><b>Camera Owner:</b></label>
   <input type="text" id="cameraOwner" placeholder="Enter camera owner's name">
 
-  <label for="date">Date:</label>
+  <label for="date"><b>Date:</b></label>
   <input type="date" id="date">
 
-  <label for="time">Time:</label>
+  <label for="time"><b>Time:</b></label>
   <input type="time" id="time">
+</div>
 
-  <label for="liveSharing">Request Live Sharing:</label>
+  <label for="liveSharing"><b>Request Live Sharing:</b></label>
   <input type="checkbox" id="liveSharing" onchange="toggleDateTimeInputs()">
 
   <button onclick="sendNotification()">Send Request</button>
