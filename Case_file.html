@@ -5,36 +5,61 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     #policeLogoContainer {
-      position: fixed;
-      bottom: 10px;
-      right: 10px;
+      position: relative;
+      margin-bottom: 500px;
+      right: 350px;
       max-width: 100px;
-      max-height: 100px;
-      opacity: 0.8;
+      max-height: 500px;
     }
 
     #policeLogoContainer img {
       width: 100%;
       height: 100%;
+      transition: 0.3s;
     }
 
+    #policeLogoContainer:hover{
+      margin-top: -5px;
+    
+    }
+
+    
     body {
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f4f4f4;
+      background-image: radial-gradient(#fff,#00ffff,#ffc0cb);
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
     }
+    .title{
+    text-align: center;
+    margin: 0 auto 80px;
+    position: relative;
+    line-height: 60px;
+  
+    }
+    .title::after{
+    content: '';
+    background: #ff523b;
+    width: 80px;
+    height: 5px;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
     #file-upload-form {
       max-width: 400px;
       padding: 20px;
-      background-color: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
+      /* border: solid 5px #ff523b; */
+      background-color: lightgray;
+      box-shadow:  15px 10px black;
+      border-radius: 25px;
       text-align: center;
     }
 
@@ -82,8 +107,12 @@
 </head>
 <body>
 
+  <div id="policeLogoContainer">
+    <img src="raj_icon.webp-transformed.png">
+  </div>
+
 <div id="file-upload-form">
-  <h2>Upload FIR and Case Files</h2>
+  <h2 class="title">Upload FIR and Case Files</h2>
 
   <form enctype="multipart/form-data" action="#" method="post">
     <label for="firFile">Upload FIR File:</label>
@@ -97,9 +126,7 @@
   </form>
 </div>
 
-<div id="policeLogoContainer">
-  <img src="Rajasthan-Police.jpg" alt="Rajasthan Police Logo">
-</div>
+
 
 <script>
   function seeCaseFiles() {
