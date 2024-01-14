@@ -9,18 +9,57 @@
       margin: 0;
       padding: 0;
       background-color: #f4f4f4;
+      background-image: radial-gradient(#fff,#00ffff,#ffc0cb);
       display: flex;
       align-items: center;
       justify-content: center;
       height: 100vh;
     }
+    #policeLogoContainer {
+      position: relative;
+      margin-bottom: 500px;
+      right: 350px;
+      max-width: 100px;
+      max-height: 500px;
+    }
+
+    #policeLogoContainer img {
+      width: 100%;
+      height: 100%;
+      transition: 0.3s;
+    }
+
+    #policeLogoContainer:hover{
+      margin-top: -5px;
+    
+    }
+
+    .title{
+    text-align: center;
+    margin: 0 auto 80px;
+    position: relative;
+    line-height: 60px;
+  
+    }
+    .title::after{
+    content: '';
+    background: #ff523b;
+    width: 80px;
+    height: 5px;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
     #feedback-form {
       max-width: 400px;
       padding: 20px;
       background-color: #fff;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      border-radius: 8px;
+      border: solid 5px #ff523b;
+      box-shadow: 15px 15px black;
+      border-radius: 25px;
       text-align: center;
     }
 
@@ -64,15 +103,21 @@
     }
 
     button:hover {
-      background-color: #2980b9; /* Slightly Darker Blue */
+      background-color: #ff523b; /* Slightly Darker Blue */
     }
   </style>
   <title>Feedback Form</title>
 </head>
+  
 <body>
+  
+  <div id="policeLogoContainer">
+    <img src="raj_icon.webp-transformed.png">
+  </div>
+  
 
 <div id="feedback-form">
-  <h2>Feedback Form</h2>
+  <h2 class="title">Feedback Form</h2>
   <p>We value your feedback! Please share your thoughts with us.</p>
 
   <form>
