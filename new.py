@@ -1,19 +1,16 @@
 import speech_recognition as sr
 import webbrowser
+import pyautogui 
 
 def process_command(command):
     if "open notepad" in command:
-        # Open Notepad using PyAutoGUI
         pyautogui.hotkey('winleft', 'r')
         pyautogui.write('notepad')
         pyautogui.press('enter')
     elif "close notepad" in command:
-        # Close Notepad using PyAutoGUI
         pyautogui.hotkey('alt', 'f4')
     elif "open case file" in command:
-        # Open Case_file.html in the default web browser
         webbrowser.open('Case_file.html')
-    # Add more commands based on your needs
 
 def main():
     recognizer = sr.Recognizer()
