@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Display</title>
+    <style>
+        video {
+            width: 100%;
+            max-width: 640px;
+            margin: auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Webcam Display</h1>
+    <video id="webcam" autoplay playsinline></video>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('getUserMedia is not supported in this browser');
+                return;
+            }
+
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function (stream) {
+                    
+                    document.getElementById('webcam').srcObject = stream;
+                })
+                .catch(function (error) {
+                    console.error('Error accessing webcam:', error.message);
+                    alert('Error accessing webcam. Check browser permissions and console for details.');
+                });
+        });
+    </script>
+</body>
+</html>
