@@ -1,65 +1,144 @@
+from flask import Flask, render_template, Response
 from ultralytics import YOLO
 import cv2
 import numpy as np
+import csv
+from itertools import zip_longest
+from tracker import EuclideanDistTracker
+from itertools import zip_longest as izip_longest
 
-model = YOLO("conect.pt")  # Load the YOLOv8s model
+app = Flask(__name__)
 
+# YOLO model initialization
+model = YOLO("yolov8s.pt")
 results_generator = model.predict(source=0, show=True, stream=False)
 
-people_count = 0  # Variable to keep track of the number of people
-color_tracker = {}  # Dictionary to track colors of each person
+# Vehicle tracking initialization
+tracker = EuclideanDistTracker()
 
-def get_average_color(image, box):
-    # Extract the region of interest (ROI) for the given bounding box
-    roi = image[box[1]:box[3], box[0]:box[2]]
+# Color detection parameters
+target_color_lower = np.array([0, 0, 0])
+target_color_upper = np.array([50, 255, 255])
 
-    # Calculate the average color in the ROI
-    average_color = np.mean(roi, axis=(0, 1))
+# Video capture initialization
+cap = cv2.VideoCapture(0)  # 0 corresponds to the default webcam, you can change it if you have multiple cameras
 
-    return average_color
 
-for results in results_generator:
-    boxes = results.boxes  # Get the bounding boxes for all detections
-    class_ids = results.class_ids  # Get the class IDs for each bounding box
-    probs = results.probs  # Get the probabilities for each class
-    frame = results.render()[0]  # Get the rendered frame for visualization
+# Crossing lines positions
+middle_line_position = 225
+up_line_position = middle_line_position - 15
+down_line_position = middle_line_position + 15
 
-    for i, box in enumerate(boxes):
-        # Filter for person detections only
-        if model.names[class_ids[i]] == "person":
-            # Process the person detection (optional)
-            # You can do additional processing on the person_boxes and person_probs here,
-            # such as filtering by probability threshold, drawing boxes on frames, etc.
+# Initialize counts and lists
+up_list = [0, 0, 0, 0]
+down_list = [0, 0, 0, 0]
+detected_classNames = []
 
-            # Count the number of people in the current frame
-            people_count += 1
+# Detection and suppression thresholds
+confThreshold = 0.1
+nmsThreshold = 0.2
 
-            # Get the average color of the person's clothing
-            average_color = get_average_color(frame, box)
+# Flask route for rendering the webpage
+@app.route('/')
+def index():
+    return render_template('index.html')
 
-            # Convert the average color to a tuple of integers
-            average_color = tuple(map(int, average_color))
+# Flask route for video feed
+def generate_frames():
+    for results in results_generator:
+        rendered_frame = results.render()[0]
 
-            # Print the average color (BGR format)
-            print(f"Person {people_count} Color (BGR): {average_color}")
+        # Perform color detection on the frame
+        frame_with_color_detection = color_detection(rendered_frame)
 
-            # Update the color tracker with the person's ID and average color
-            color_tracker[people_count] = average_color
+        # Vehicle detection and counting
+        detection, class_names = vehicle_detection(frame_with_color_detection)
 
-    # Display the current frame with person detections (optional)
-    model.show()
+        # Update the tracker
+        boxes_ids = tracker.update(detection)
 
-    # Break the loop if 'q' is pressed
-    if cv2.waitKey(1) & 0xFF == ord('q'):
-        break
+        # Count vehicles based on their positions
+        for box_id in boxes_ids:
+            count_vehicle(box_id)
 
-# Print the total number of people detected
-print(f"Total People Count: {people_count}")
+        # Encode the frame as JPEG image
+        _, jpeg = cv2.imencode('.jpg', frame_with_color_detection)
+        frame = jpeg.tobytes()
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-# Print the colors associated with each person
-print("Color Tracker:")
-for person_id, color in color_tracker.items():
-    print(f"Person {person_id} Color (BGR): {color}")
+# Flask route for video feed
+@app.route('/video_feed')
+def video_feed():
+    return Response(generate_frames(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-# Release resources
-cv2.destroyAllWindows()
+def color_detection(frame):
+    hsv_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv_frame, target_color_lower, target_color_upper)
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for contour in contours:
+        x, y, w, h = cv2.boundingRect(contour)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        center_x = x + w // 2
+        center_y = y + h // 2
+
+        if target_color_lower[0] <= hsv_frame[center_y, center_x, 0] <= target_color_upper[0]:
+            print("Target color detected!")
+
+    return frame
+
+def vehicle_detection(frame):
+    input_size = 320
+    blob = cv2.dnn.blobFromImage(frame, 1 / 255, (input_size, input_size), [0, 0, 0], 1, crop=False)
+    model.setInput(blob)
+    layersNames = model.net.getLayerNames()
+    outputNames = [(layersNames[i[0] - 1]) for i in model.net.getUnconnectedOutLayers()]
+    outputs = model.net.forward(outputNames)
+
+    boxes = []
+    classIds = []
+    confidence_scores = []
+
+    for output in outputs:
+        for det in output:
+            scores = det[5:]
+            classId = np.argmax(scores)
+            confidence = scores[classId]
+
+            if confidence > confThreshold and classId in required_class_index:
+                w, h = int(det[2] * width), int(det[3] * height)
+                x, y = int((det[0] * width) - w / 2), int((det[1] * height) - h / 2)
+                boxes.append([x, y, w, h])
+                classIds.append(classId)
+                confidence_scores.append(float(confidence))
+
+    return boxes, classIds
+
+def count_vehicle(box_id):
+    x, y, w, h, id, index = box_id
+    center = find_center(x, y, w, h)
+    ix, iy = center
+
+    if (iy > up_line_position) and (iy < middle_line_position):
+        if id not in temp_up_list:
+            temp_up_list.append(id)
+    elif iy < down_line_position and iy > middle_line_position:
+        if id not in temp_down_list:
+            temp_down_list.append(id)
+    elif iy < up_line_position:
+        if id in temp_down_list:
+            temp_down_list.remove(id)
+            up_list[index] = up_list[index] + 1
+    elif iy > down_line_position:
+        if id in temp_up_list:
+            temp_up_list.remove(id)
+            down_list[index] = down_list[index] + 1
+
+def find_center(x, y, w, h):
+    center_x = x + w // 2
+    center_y = y + h // 2
+    return center_x, center_y
+
+if __name__ == "__main__":
+    app.run(debug=True)
