@@ -1,28 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <style>
-    #policeLogoContainer {
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  max-width: 100px; 
-  max-height: 100px;
-  opacity: 0.8; 
-  }
-
-#policeLogoContainer img {
-  width: 100%;
-  height: 100%;
-}
-
-  </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="raj.css">
-  <title>Geo-Tagged Private Camera System</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    #policeLogoContainer {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      width: 50px;
+      height: 50px;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+    }
+
+    #policeLogoContainer:hover {
+      opacity: 1;
+    }
+
+    #policeLogoContainer img {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    #app {
+      margin-top: 60px; /* Adjust margin to make space for the logo */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 400px; /* Adjust the maximum width as needed */
+      margin-top: 20px; /* Adjust the top margin as needed */
+      background-color: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      padding: 20px;
+    }
+
+    .container h1 {
+      color: #333;
+    }
+
+    .container form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .container input {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+    }
+
+    .container button {
+      background-color: #4caf50;
+      color: #fff;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    /* ... rest of your styles ... */
+  </style>
+  <title>Integrated System</title>
 </head>
+
 <body>
+  <div id="policeLogoContainer">
+    <img src="Rajasthan-Police.jpg" alt="Rajasthan Police Logo">
+  </div>
+
   <div id="app">
     <h1>Welcome to Geo-Tagged Private Camera System</h1>
     <div id="content">
@@ -35,13 +101,27 @@
       <div id="userInterface"></div>
     </div>
 
-    
-    <div id="policeLogoContainer">
-      <img src="Rajasthan-Police.jpg" alt="Rajasthan Police Logo">
+    <div class="container" id="container">
+      <form>
+        <h1>Create Account</h1>
+        <div class="social-icons">
+          <a href="#" class="icon"><i class="fa-brands fa-google-plus-g"></i></a>
+          <a href="#" class="icon"><i class="fa-brands fa-facebook-f"></i></a>
+          <a href="#" class="icon"><i class="fa-brands fa-github"></i></a>
+          <a href="#" class="icon"><i class="fa-brands fa-linkedin-in"></i></a>
+        </div>
+        <span>or use your email for registration</span>
+        <input type="Aadhar number" placeholder="Aadhar number">
+        <input type="email" placeholder="Email">
+        <input type="password" placeholder="Password">
+        <button>Sign Up</button>
+      </form>
     </div>
-  </div>
 
-  <script src="app.js"></script>
-  <script src="raj.js"></script>
+    <script src="app.js"></script>
+    <script src="raj.js"></script>
+    <script src="script.js"></script>
+  </div>
 </body>
+
 </html>
