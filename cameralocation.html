@@ -54,6 +54,25 @@
         .location-item:hover {
             background-color: #f0f0f0;
         }
+
+        /* Add this style for the buttons */
+        .sidebar-button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar-button:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -62,6 +81,10 @@
 <div id="sidebar">
     <h2>Cameras</h2>
     <ul id="locations-list"></ul>
+    <!-- "Go to your location" button -->
+    <a href="#" class="sidebar-button" onclick="goToUserLocation()">Go to your location</a>
+    <!-- "Send Request" button -->
+    <a href="access.html" class="sidebar-button">Send Request</a>
 </div>
 
 <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
@@ -188,6 +211,11 @@
             iconAnchor: [15, 30],
             html: '<div style="background-color: blue; border-radius: 50%; width: 30px; height: 30px;"></div>'
         });
+    }
+
+    // Function to go to the user's location
+    function goToUserLocation() {
+        mymap.locate({ setView: true, maxZoom: 16 });
     }
 </script>
 
