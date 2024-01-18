@@ -93,28 +93,31 @@
   </style>
   <title>Camera Access Request</title>
 </head>
+
 <body>
 
 <div id="notification-form">
-  <h2 class="title"><b><i>Camera Access Request<br>Biometrics Verification</i></b></h2>
-  <div class="date">
-  <label for="cameraOwner"><b>Camera Owner:</b></label>
+  <h2>Camera Access Request<br>Biometrics Verification</h2>
+  <label for="cameraOwner">Camera Owner:</label>
   <input type="text" id="cameraOwner" placeholder="Enter camera owner's name">
 
-  <label for="date"><b>Date:</b></label>
+  <label for="date">Date:</label>
   <input type="date" id="date">
 
-  <label for="time"><b>Time:</b></label>
+  <label for="time">Time:</label>
   <input type="time" id="time">
-</div>
 
-  <label for="liveSharing"><b>Request Live Sharing:</b></label>
+  <label for="liveSharing">Request Live Sharing:</label>
   <input type="checkbox" id="liveSharing" onchange="toggleDateTimeInputs()">
 
   <button onclick="sendNotification()">Send Request</button>
 </div>
+
+<!-- Fingerprint Animation -->
+<div id="fingerprintAnimation"></div>
+
 <div id="policeLogoContainer">
-  <img src="raj_icon.webp-transformed.png">
+  <img src="raj_icon.webp-transformed.png" alt="Rajasthan Police Logo">
 </div>
 
 <script>
@@ -125,7 +128,14 @@
     const liveSharing = document.getElementById('liveSharing').checked;
 
     if (liveSharing) {
-      alert("Live Sharing is requested. Access for Date and Time is disabled.");
+      // Show fingerprint animation
+      const fingerprintAnimation = document.getElementById('fingerprintAnimation');
+      fingerprintAnimation.style.visibility = 'visible';
+
+      // Redirect to a different HTML file for live sharing after 3 seconds
+      setTimeout(function () {
+        window.location.href = "Camara.html";
+      }, 3000);
     } else {
       const confirmationMessage = `Request sent to ${cameraOwner}.`;
 
@@ -143,9 +153,25 @@
     const timeInput = document.getElementById('time');
     const liveSharingCheckbox = document.getElementById('liveSharing');
 
-    dateInput.disabled = liveSharingCheckbox.checked;
-    timeInput.disabled = liveSharingCheckbox.checked;
+    if (liveSharingCheckbox.checked) {
+      // If live sharing is requested, set date and time to current date and time
+      const currentDate = new Date().toISOString().split('T')[0];
+      const currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      dateInput.value = currentDate;
+      timeInput.value = currentTime;
+
+      // Disable the date and time inputs
+      dateInput.disabled = true;
+      timeInput.disabled = true;
+    } else {
+      // If live sharing is not requested, enable the date and time inputs
+      dateInput.disabled = false;
+      timeInput.disabled = false;
+    }
   }
 </script>
+
+
 </body>
 </html>
