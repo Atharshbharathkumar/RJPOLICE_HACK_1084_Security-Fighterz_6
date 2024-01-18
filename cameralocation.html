@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Map with Directions and Live Location</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.css" />
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+        }
+
+        #map {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 1;
+        }
+
+        #sidebar {
+            width: 300px;
+            background-color: #f4f4f4;
+            padding: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            z-index: 2;
+        }
+
+        #locations-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .location-item {
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .location-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+<div id="map"></div>
+<div id="sidebar">
+    <h2>Cameras</h2>
+    <ul id="locations-list"></ul>
+</div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-routing-machine/dist/leaflet-routing-machine.js"></script>
+<script src="https://unpkg.com/leaflet.locatecontrol/dist/L.Control.Locate.min.js"></script>
+
+<script>
+    // Initialize the map
+    var ricCenter = [26.9064, 75.8069]; // Rajasthan International Center (RIC) coordinates
+    var mymap = L.map('map').setView(ricCenter, 14);
+
+    // Add a tile layer (OpenStreetMap)
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(mymap);
+
+    // Add locate control to the map
+    L.control.locate({
+        strings: {
+            title: "Show me where I am!"
+        },
+        locateOptions: {
+            enableHighAccuracy: true
+        }
+    }).addTo(mymap);
+
+    // Replace the coordinates and names below with your data
+    var cameraData = [
+        { name: 'Camera 1', coordinates: [26.9064, 75.8069] },
+        { name: 'Camera 2', coordinates: [26.9050, 75.8055] },
+        { name: 'Camera 3', coordinates: [26.9070, 75.8040] },
+        { name: 'Camera 4', coordinates: [26.9075, 75.8085] },
+        { name: 'Camera 5', coordinates: [26.9090, 75.8080] },
+        { name: 'Camera 6', coordinates: [26.9085, 75.8110] },
+        { name: 'Camera 7', coordinates: [26.9065, 75.8120] },
+        { name: 'Camera 8', coordinates: [26.9045, 75.8095] },
+        { name: 'Camera 9', coordinates: [26.9035, 75.8075] },
+        { name: 'Camera 10', coordinates: [26.9055, 75.8050] },
+        { name: 'Camera 11', coordinates: [26.9075, 75.8035] },
+        { name: 'Camera 12', coordinates: [26.9095, 75.8060] }
+    ];
+
+    // Add markers to the map
+    var markers = [];
+    for (var i = 0; i < cameraData.length; i++) {
+        var camera = cameraData[i];
+        var marker = L.marker(camera.coordinates, { icon: getCameraIcon() }).addTo(mymap);
+        marker.bindPopup("<b>" + camera.name + "</b><br>Location: " + camera.coordinates.join(', ') +
+            "<br><button onclick='getDirections(" + i + ")'>Get Directions</button>" +
+            "<br><button onclick='getLiveDirections(" + i + ")'>Go from your location</button>").openPopup();
+        markers.push(marker);
+    }
+
+    // Create a marker for the user's location with a red icon
+    var userMarker = L.marker(ricCenter, { icon: getRedIcon() }).addTo(mymap);
+
+    // Populate the sidebar with camera list
+    var locationsList = document.getElementById('locations-list');
+    markers.forEach(function(marker, index) {
+        var camera = cameraData[index];
+        var listItem = document.createElement('li');
+        listItem.className = 'location-item';
+        listItem.innerHTML = camera.name +
+            "<br><button onclick='getDirections(" + index + ")'>Get Directions</button>" +
+            "<br><button onclick='getLiveDirections(" + index + ")'>Go from your location</button>";
+        listItem.onclick = function() {
+            // Pan to the clicked marker
+            mymap.panTo(marker.getLatLng());
+            // Open popup for the clicked marker
+            marker.openPopup();
+        };
+        locationsList.appendChild(listItem);
+    });
+
+    // Function to get directions
+    function getDirections(index) {
+        var camera = cameraData[index];
+        L.Routing.control({
+            waypoints: [
+                L.latLng(ricCenter[0], ricCenter[1]),
+                L.latLng(camera.coordinates[0], camera.coordinates[1])
+            ],
+            routeWhileDragging: true
+        }).addTo(mymap);
+    }
+
+    // Function to get live location and directions
+    function getLiveDirections(index) {
+        mymap.locate({ setView: true, maxZoom: 16 });
+
+        mymap.on('locationfound', function (e) {
+            var userLocation = [e.latitude, e.longitude];
+            userMarker.setLatLng(userLocation); // Update user marker position
+            var camera = cameraData[index];
+            L.Routing.control({
+                waypoints: [
+                    L.latLng(userLocation[0], userLocation[1]),
+                    L.latLng(camera.coordinates[0], camera.coordinates[1])
+                ],
+                routeWhileDragging: true
+            }).addTo(mymap);
+        });
+
+        mymap.on('locationerror', function (e) {
+            alert("Error getting your location: " + e.message);
+        });
+    }
+
+    // Function to get the red icon for the user's location
+    function getRedIcon() {
+        return L.divIcon({
+            className: 'red-marker',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            html: '<div style="background-color: red; border-radius: 50%; width: 30px; height: 30px;"></div>'
+        });
+    }
+
+    // Function to get the blue icon for camera locations
+    function getCameraIcon() {
+        return L.divIcon({
+            className: 'blue-marker',
+            iconSize: [30, 30],
+            iconAnchor: [15, 30],
+            html: '<div style="background-color: blue; border-radius: 50%; width: 30px; height: 30px;"></div>'
+        });
+    }
+</script>
+
+</body>
+</html>
